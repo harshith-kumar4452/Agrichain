@@ -1,0 +1,18 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": true,
+    "batches": {
+      ".indexOn": ["batch_id", "farmer_id", "status"]
+    },
+    "trace_events": {
+      ".indexOn": ["batch_id", "actor_id", "timestamp"]
+    },
+    "blockchain_anchors": {
+      ".indexOn": ["batch_id", "tx_hash"]
+    },
+    "users": {
+      ".indexOn": ["email"]
+    }
+  }
+}
