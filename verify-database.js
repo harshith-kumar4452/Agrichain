@@ -1,93 +1,68 @@
-// Database verification script
-// Run this with: node verify-database.js
+// Firebase Database Verification Script
+// Run with: node verify-database.js
 
-const { createClient } = require('@supabase/supabase-js')
+const { initializeApp, getApps, deleteApp } = require('firebase/app');
+const { getDatabase, ref, get } = require('firebase/database');
+const path = require('path');
 
 // Load environment variables
-require('dotenv').config({ path: '.env.local' })
+require('dotenv').config({ path: path.join(__dirname, '.env.local') });
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+};
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Missing Supabase environment variables')
-  console.log('Make sure .env.local contains:')
-  console.log('NEXT_PUBLIC_SUPABASE_URL=your_url')
-  console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key')
-  process.exit(1)
-}
+async function verifyFirebase() {
+  console.log('🔍 Verifying Firebase setup...');
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+  if (!firebaseConfig.apiKey || !firebaseConfig.databaseURL) {
+    console.error('❌ Missing Firebase environment variables in .env.local');
+    return false;
+  }
 
-async function verifyDatabase() {
-  console.log('🔍 Verifying database setup...')
-  
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
   try {
-    // Check if batches table exists
-    const { data: batches, error: batchesError } = await supabase
-      .from('batches')
-      .select('count')
-      .limit(1)
-    
-    if (batchesError) {
-      console.error('❌ Batches table error:', batchesError.message)
-      console.log('\n📋 To fix this:')
-      console.log('1. Go to https://supabase.com/dashboard')
-      console.log('2. Select your project')
-      console.log('3. Go to SQL Editor')
-      console.log('4. Run the contents of database-schema.sql')
-      return false
-    }
-    
-    console.log('✅ Batches table exists')
-    
-    // Check if users table exists
-    const { data: users, error: usersError } = await supabase
-      .from('users')
-      .select('count')
-      .limit(1)
-    
-    if (usersError) {
-      console.error('❌ Users table error:', usersError.message)
-      return false
-    }
-    
-    console.log('✅ Users table exists')
-    
-    // Check if trace_events table exists
-    const { data: events, error: eventsError } = await supabase
-      .from('trace_events')
-      .select('count')
-      .limit(1)
-    
-    if (eventsError) {
-      console.error('❌ Trace events table error:', eventsError.message)
-      return false
-    }
-    
-    console.log('✅ Trace events table exists')
-    
-    // Check sample data
-    const { data: sampleUsers } = await supabase
-      .from('users')
-      .select('*')
-      .limit(1)
-    
-    if (sampleUsers && sampleUsers.length > 0) {
-      console.log('✅ Sample data exists')
+    console.log(`Connecting to database: ${firebaseConfig.databaseURL}`);
+
+    // Check for "batches" node
+    const batchesSnapshot = await get(ref(db, 'batches'));
+
+    if (batchesSnapshot.exists()) {
+      console.log('✅ "batches" node exists and is accessible');
     } else {
-      console.log('⚠️  No sample data found (this is okay)')
+      console.log('ℹ️  "batches" node does not exist yet (this is normal for new projects)');
     }
-    
-    console.log('\n🎉 Database setup is complete!')
-    console.log('You can now run your application.')
-    
-    return true
-    
+
+    console.log('\n🎉 Firebase setup is verified!');
+    console.log('You can now run your application with: npm run dev');
+
+    // Clean up
+    await deleteApp(app);
+    return true;
+
   } catch (error) {
-    console.error('❌ Database verification failed:', error.message)
-    return false
+    console.error('❌ Firebase verification failed:', error.message);
+    if (error.code === 'PERMISSION_DENIED') {
+      console.log('\n📋 To fix this:');
+      console.log('1. Go to Firebase Console -> Realtime Database -> Rules');
+      console.log('2. Make sure your rules allow read/write for testing.');
+      console.log('3. See database.rules.json in your project for recommended rules.');
+    }
+    await deleteApp(app);
+    return false;
   }
 }
 
-verifyDatabase()
+verifyFirebase().then(success => {
+  if (!success) process.exit(1);
+  process.exit(0);
+});

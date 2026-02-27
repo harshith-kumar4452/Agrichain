@@ -71,31 +71,25 @@ NEXT_PUBLIC_CONTRACT_ADDRESS=0x0000000000000000000000000000000000000000
 # Polygon Mumbai RPC URL (defaults to public RPC if not set)
 NEXT_PUBLIC_POLYGON_RPC_URL=https://rpc-mumbai.maticvigil.com
 
+# = [FIREBASE_RULES_SETUP.md](file:///c:/Users/harsh/OneDrive/Desktop/Agrichain/FIREBASE_RULES_SETUP.md)
 # ============================================
 # FIREBASE CONFIGURATION
 # ============================================
-# Firebase configuration is currently hardcoded in src/lib/firebase.ts
-# If you want to use your own Firebase project, update the config in that file
-# Project ID: blockchain-17cc5
-# Database URL: https://blockchain-17cc5-default-rtdb.asia-southeast1.firebasedatabase.app
+# Create a .env.local file with these values:
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyAaVJB8vF6n5jWcAx3HHFK2xW-F3KF6FVQ
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=blockchain-17cc5.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://blockchain-17cc5-default-rtdb.asia-southeast1.firebasedatabase.app
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=blockchain-17cc5
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=blockchain-17cc5.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=131636394241
+NEXT_PUBLIC_FIREBASE_APP_ID=1:131636394241:web:f149dfa297a795473a4300
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-NMTCEDKK2E
 ```
 
 ### Firebase Configuration
 
-The Firebase configuration is currently hardcoded in `src/lib/firebase.ts`:
+The Firebase configuration is managed via environment variables in `.env.local`. The values are passed to `src/lib/firebase.ts`.
 
-```typescript
-const firebaseConfig = {
-  apiKey: "AIzaSyAaVJB8vF6n5jWcAx3HHFK2xW-F3KF6FVQ",
-  authDomain: "blockchain-17cc5.firebaseapp.com",
-  databaseURL: "https://blockchain-17cc5-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "blockchain-17cc5",
-  storageBucket: "blockchain-17cc5.firebasestorage.app",
-  messagingSenderId: "131636394241",
-  appId: "1:131636394241:web:f149dfa297a795473a4300",
-  measurementId: "G-NMTCEDKK2E"
-};
-```
 
 **To use your own Firebase project:**
 1. Create a Firebase project at https://console.firebase.google.com

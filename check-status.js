@@ -11,18 +11,18 @@ console.log('');
 const envPath = path.join(__dirname, '.env.local');
 if (fs.existsSync(envPath)) {
   console.log('✅ .env.local file exists');
-  
+
   const envContent = fs.readFileSync(envPath, 'utf8');
-  
+
   // Check environment variables
   const checks = [
-    { name: 'Supabase URL', pattern: 'NEXT_PUBLIC_SUPABASE_URL=' },
-    { name: 'Supabase Key', pattern: 'NEXT_PUBLIC_SUPABASE_ANON_KEY=' },
+    { name: 'Firebase API Key', pattern: 'NEXT_PUBLIC_FIREBASE_API_KEY=' },
+    { name: 'Firebase Database URL', pattern: 'NEXT_PUBLIC_FIREBASE_DATABASE_URL=' },
+    { name: 'Firebase Project ID', pattern: 'NEXT_PUBLIC_FIREBASE_PROJECT_ID=' },
     { name: 'Contract Address', pattern: 'NEXT_PUBLIC_CONTRACT_ADDRESS=' },
-    { name: 'Polygon RPC', pattern: 'NEXT_PUBLIC_POLYGON_RPC_URL=' },
-    { name: 'Chain ID', pattern: 'NEXT_PUBLIC_CHAIN_ID=' }
+    { name: 'Polygon RPC', pattern: 'NEXT_PUBLIC_POLYGON_RPC_URL=' }
   ];
-  
+
   checks.forEach(check => {
     if (envContent.includes(check.pattern)) {
       console.log(`✅ ${check.name}: Configured`);
@@ -30,7 +30,7 @@ if (fs.existsSync(envPath)) {
       console.log(`❌ ${check.name}: Missing`);
     }
   });
-  
+
   // Check contract address specifically
   const contractMatch = envContent.match(/NEXT_PUBLIC_CONTRACT_ADDRESS=(.+)/);
   if (contractMatch) {
@@ -43,7 +43,7 @@ if (fs.existsSync(envPath)) {
       console.log('✅ Contract Address: Configured');
     }
   }
-  
+
 } else {
   console.log('❌ .env.local file not found');
 }
