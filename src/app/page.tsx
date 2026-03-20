@@ -1,348 +1,228 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useState } from 'react'
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import {
   Wheat,
-  Truck,
-  Search,
-  BarChart3,
   Shield,
-  Clock,
+  Truck,
+  Store,
   Users,
-  Globe,
-  CheckCircle2,
-  Sparkles,
+  X,
   ArrowRight,
-  QrCode,
-  Lock,
-  Zap
+  CheckCircle2
 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
-const fadeIn = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
-}
-
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
+const rolesData = [
+  {
+    id: 'farmer',
+    title: 'Farmer',
+    icon: Wheat,
+    color: 'emerald',
+    badge: 'Initiator',
+    shortDesc: 'Register crop harvests on the blockchain.',
+    responsibilities: [
+      'Register new crop batches securely on the blockchain',
+      'Generate immutable QR codes for product tracking',
+      'Log initial harvest location, date, and quantity'
+    ]
+  },
+  {
+    id: 'officer',
+    title: 'Officer',
+    icon: Shield,
+    color: 'blue',
+    badge: 'Authority',
+    shortDesc: 'Maintain compliance and safety standards.',
+    responsibilities: [
+      'Audit supply chain activities and log trace events',
+      'Verify regulatory compliance at any stage',
+      'Access full transparent chain records to maintain safety'
+    ]
+  },
+  {
+    id: 'aggregator',
+    title: 'Aggregator',
+    icon: Truck,
+    color: 'orange',
+    badge: 'Logistics',
+    shortDesc: 'Manage transit, storage, and batch transport.',
+    responsibilities: [
+      'Log transportation and storage events',
+      'Handle batch updates across different facilities',
+      'Maintain condition tracking (temperature/humidity logs)'
+    ]
+  },
+  {
+    id: 'retailer',
+    title: 'Retailer',
+    icon: Store,
+    color: 'purple',
+    badge: 'Destination',
+    shortDesc: 'Final node presenting authenticated products.',
+    responsibilities: [
+      'Receive and securely log incoming shipments',
+      'Present product tracking QR to end consumers',
+      'Manage inventory and finalize the supply chain status'
+    ]
+  },
+  {
+    id: 'admin',
+    title: 'Admin',
+    icon: Users,
+    color: 'indigo',
+    badge: 'Management',
+    shortDesc: 'Control authorized personnel and stakeholders.',
+    responsibilities: [
+      'Pre-authorize new stakeholder emails',
+      'Assign functional ecosystem roles (Farmer, Retailer, etc.)',
+      'Oversee platform security and user management'
+    ]
   }
+]
+
+const colorMaps = {
+  emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', icon: 'from-emerald-500 to-green-600', btn: 'bg-emerald-600 hover:bg-emerald-700' },
+  blue: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', icon: 'from-blue-500 to-cyan-600', btn: 'bg-blue-600 hover:bg-blue-700' },
+  orange: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', icon: 'from-orange-500 to-red-500', btn: 'bg-orange-600 hover:bg-orange-700' },
+  purple: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700', icon: 'from-purple-500 to-indigo-600', btn: 'bg-purple-600 hover:bg-purple-700' },
+  indigo: { bg: 'bg-indigo-50', border: 'border-indigo-200', text: 'text-indigo-700', icon: 'from-indigo-500 to-purple-600', btn: 'bg-indigo-600 hover:bg-indigo-700' }
 }
 
-export default function HomePage() {
+export default function GettingStartedPage() {
+  const [selectedRole, setSelectedRole] = useState<typeof rolesData[0] | null>(null)
+
   return (
-    <div className="space-y-32 pb-20">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-20 pb-32">
-        {/* Animated background elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-200/30 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            className="text-center space-y-8 max-w-5xl mx-auto"
-            initial="initial"
-            animate="animate"
-            variants={staggerContainer}
-          >
-            <motion.div variants={fadeIn}>
-              <Badge variant="success" className="mb-4 text-sm px-4 py-1.5">
-                <Sparkles className="w-3 h-3 mr-1.5" />
-                Powered by Blockchain Technology
-              </Badge>
-            </motion.div>
-
-            <motion.h1
-              className="text-5xl md:text-7xl font-bold text-gray-900 leading-tight"
-              variants={fadeIn}
-            >
-              Track Every Step From
-              <span className="gradient-text block mt-2">Farm to Table</span>
-            </motion.h1>
-
-            <motion.p
-              className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
-              variants={fadeIn}
-            >
-              Revolutionary blockchain-powered supply chain transparency for agriculture.
-              Build trust, ensure safety, and transform traceability.
-            </motion.p>
-
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
-              variants={fadeIn}
-            >
-              <Link href="/farmer">
-                <Button size="lg" className="bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-700 hover:to-green-600 text-white shadow-lg hover:shadow-xl transition-all text-lg px-8 py-6">
-                  <Wheat className="w-5 h-5 mr-2" />
-                  Get Started Free
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </Link>
-              <Link href="/verify">
-                <Button size="lg" variant="outline" className="border-2 hover:border-emerald-500 hover:text-emerald-600 transition-all text-lg px-8 py-6">
-                  <Search className="w-5 h-5 mr-2" />
-                  Verify Products
-                </Button>
-              </Link>
-            </motion.div>
-
-            <motion.div
-              className="flex flex-wrap gap-8 justify-center items-center pt-12 text-sm text-gray-600"
-              variants={fadeIn}
-            >
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                <span>Free Forever</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                <span>No Credit Card</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                <span>Blockchain Verified</span>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="container mx-auto px-4">
-        <div className="glass rounded-3xl p-12 shadow-strong">
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-5xl font-bold gradient-text mb-2">1000+</div>
-              <div className="text-gray-600 font-medium">Batches Tracked</div>
-            </div>
-            <div>
-              <div className="text-5xl font-bold gradient-text mb-2">99.9%</div>
-              <div className="text-gray-600 font-medium">Uptime</div>
-            </div>
-            <div>
-              <div className="text-5xl font-bold gradient-text mb-2">500+</div>
-              <div className="text-gray-600 font-medium">Happy Farmers</div>
-            </div>
-            <div>
-              <div className="text-5xl font-bold gradient-text mb-2">24/7</div>
-              <div className="text-gray-600 font-medium">Support</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <Badge variant="outline" className="mb-4">
-            <Sparkles className="w-3 h-3 mr-1.5" />
-            Features
+    <div className="min-h-screen bg-slate-50 relative pb-20">
+      
+      {/* Header */}
+      <div className="pt-20 pb-16 text-center px-4">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto space-y-6">
+          <Badge variant="outline" className="px-4 py-1.5 text-sm uppercase tracking-widest text-[#15803d] border-[#15803d]">
+            Getting Started
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Everything You Need for
-            <span className="gradient-text block">Complete Transparency</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Powerful features to track, verify, and manage your agricultural supply chain
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
+            Select Your <span className="text-emerald-600">AgriChain</span> Role
+          </h1>
+          <p className="text-lg text-gray-600 mt-4 leading-relaxed max-w-2xl mx-auto">
+            AgriChain empowers all stakeholders in the agricultural supply chain. 
+            Click on your designated role below to discover your features and responsibilities before logging into your portal.
           </p>
+        </motion.div>
+      </div>
+
+      {/* Grid Flow */}
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
+          {rolesData.map((role, idx) => {
+            const Icon = role.icon
+            const colors = colorMaps[role.color as keyof typeof colorMaps]
+            
+            return (
+              <motion.div 
+                key={role.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.1 }}
+                className={`${idx === 3 ? "lg:col-start-2" : ""} cursor-pointer`}
+                onClick={() => setSelectedRole(role)}
+              >
+                <Card className={`h-full hover:-translate-y-2 transition-transform duration-300 border-2 ${colors.border} hover:shadow-xl bg-white relative overflow-hidden group`}>
+                  <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${colors.icon}`} />
+                  <CardHeader className="p-6 relative z-10">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${colors.icon} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                        <Icon className="w-7 h-7 text-white" />
+                      </div>
+                      <Badge variant="secondary" className={`${colors.bg} ${colors.text} border-0`}>
+                        {role.badge}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-2xl font-bold text-gray-900 mb-2">{role.title}</CardTitle>
+                    <CardDescription className="text-base text-gray-600">
+                      {role.shortDesc}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </motion.div>
+            )
+          })}
         </div>
+      </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="hover-lift glass border-0">
-            <CardHeader>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center mb-4">
-                <Wheat className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-xl">Batch Creation</CardTitle>
-              <CardDescription className="text-base">
-                Farmers create crop batches with unique QR codes for end-to-end tracking
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="hover-lift glass border-0">
-            <CardHeader>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4">
-                <Truck className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-xl">Trace Events</CardTitle>
-              <CardDescription className="text-base">
-                Log every touchpoint from harvest to retail with timestamps and location data
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="hover-lift glass border-0">
-            <CardHeader>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-xl">Blockchain Proof</CardTitle>
-              <CardDescription className="text-base">
-                Immutable records anchored to Polygon blockchain for tamper-proof verification
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="hover-lift glass border-0">
-            <CardHeader>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center mb-4">
-                <QrCode className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-xl">QR Verification</CardTitle>
-              <CardDescription className="text-base">
-                Consumers scan QR codes to instantly verify product authenticity and journey
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <Badge variant="outline" className="mb-4">
-              <Zap className="w-3 h-3 mr-1.5" />
-              Benefits
-            </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Why Choose
-              <span className="gradient-text block">AgriChain?</span>
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              Industry-leading blockchain supply chain platform built for modern agriculture
-            </p>
-            <div className="space-y-6">
-              <div className="flex gap-4">
-                <div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-6 h-6 text-emerald-600" />
+      {/* Pop-up Modal */}
+      <AnimatePresence>
+        {selectedRole && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+              onClick={() => setSelectedRole(null)}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+              animate={{ opacity: 1, scale: 1, y: 0 }} 
+              exit={{ opacity: 0, scale: 0.95, y: 20 }} 
+              className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden"
+            >
+              {/* Modal Header */}
+              <div className={`px-6 py-8 bg-gradient-to-br ${colorMaps[selectedRole.color as keyof typeof colorMaps].icon} text-white`}>
+                <button 
+                  onClick={() => setSelectedRole(null)}
+                  className="absolute top-4 right-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                >
+                  <X className="w-5 h-5 text-white" />
+                </button>
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 bg-white/20 rounded-xl">
+                    <selectedRole.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-bold">{selectedRole.title} Interface</h2>
+                    <p className="text-white/80 mt-1">{selectedRole.badge} Portal</p>
+                  </div>
                 </div>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 space-y-6">
                 <div>
-                  <h3 className="font-semibold text-lg text-gray-900 mb-2">Instant Recalls</h3>
-                  <p className="text-gray-600">
-                    Detect contamination and trace affected batches in minutes, protecting consumers and brands
-                  </p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-100 pb-2">
+                    Key Features & Responsibilities
+                  </h3>
+                  <ul className="space-y-4 mt-4">
+                    {selectedRole.responsibilities.map((resp, i) => (
+                      <li key={i} className="flex items-start">
+                        <CheckCircle2 className={`w-5 h-5 mr-3 flex-shrink-0 ${colorMaps[selectedRole.color as keyof typeof colorMaps].text}`} />
+                        <span className="text-gray-700 leading-snug">{resp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="pt-4 flex justify-end space-x-3 border-t border-gray-100">
+                  <Button variant="ghost" onClick={() => setSelectedRole(null)}>
+                    Cancel
+                  </Button>
+                  <Link href="/auth">
+                    <Button className={`${colorMaps[selectedRole.color as keyof typeof colorMaps].btn} text-white shadow-md`}>
+                      Access {selectedRole.title} Portal
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
                 </div>
               </div>
-
-              <div className="flex gap-4">
-                <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <Users className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-900 mb-2">Multi-Stakeholder</h3>
-                  <p className="text-gray-600">
-                    Connect farmers, aggregators, retailers, and consumers in one transparent ecosystem
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
-                  <Lock className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-900 mb-2">Tamper-Proof</h3>
-                  <p className="text-gray-600">
-                    Blockchain immutability ensures data integrity and builds lasting consumer trust
-                  </p>
-                </div>
-              </div>
-            </div>
+            </motion.div>
           </div>
+        )}
+      </AnimatePresence>
 
-          <div className="grid grid-cols-2 gap-6">
-            <Card className="glass border-0">
-              <CardHeader>
-                <Globe className="w-8 h-8 text-emerald-600 mb-2" />
-                <CardTitle>Global Standards</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Built on open blockchain standards for worldwide interoperability
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="glass border-0 mt-8">
-              <CardHeader>
-                <BarChart3 className="w-8 h-8 text-blue-600 mb-2" />
-                <CardTitle>Real-Time Analytics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Monitor supply chain performance with live dashboards
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="glass border-0 -mt-8">
-              <CardHeader>
-                <Shield className="w-8 h-8 text-purple-600 mb-2" />
-                <CardTitle>Enterprise Security</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Bank-grade security protecting your sensitive data
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="glass border-0">
-              <CardHeader>
-                <Zap className="w-8 h-8 text-orange-600 mb-2" />
-                <CardTitle>Lightning Fast</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Instant verification and real-time tracking updates
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="container mx-auto px-4">
-        <div className="relative overflow-hidden bg-gradient-to-br from-emerald-600 to-green-500 rounded-3xl p-12 md:p-20 text-center shadow-strong">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-
-          <div className="relative z-10 space-y-6">
-            <h2 className="text-4xl md:text-5xl font-bold text-white">
-              Ready to Transform Your Supply Chain?
-            </h2>
-            <p className="text-xl text-emerald-50 max-w-2xl mx-auto">
-              Join hundreds of farmers and retailers already using AgriChain for complete transparency
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              <Link href="/farmer">
-                <Button size="lg" variant="secondary" className="bg-white text-emerald-600 hover:bg-gray-100 shadow-lg text-lg px-8 py-6">
-                  <Wheat className="w-5 h-5 mr-2" />
-                  Create Your First Batch
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </Link>
-              <Link href="/dashboard">
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6">
-                  <BarChart3 className="w-5 h-5 mr-2" />
-                  View Dashboard
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getDatabase, ref, push, set, get, update, query, orderByChild, equalTo } from "firebase/database";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut } from "firebase/auth";
-
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 // Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -37,6 +36,54 @@ export const signOut = async () => {
     return { success: true };
   } catch (error) {
     console.error('Error signing out:', error);
+    return { success: false, error };
+  }
+};
+
+export const signInWithEmail = async (email: string, password: string) => {
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    return { success: true, user: result.user };
+  } catch (error) {
+    console.error('Error signing in with email:', error);
+    return { success: false, error };
+  }
+};
+
+export const signUpWithEmail = async (email: string, password: string) => {
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    return { success: true, user: result.user };
+  } catch (error) {
+    console.error('Error signing up with email:', error);
+    return { success: false, error };
+  }
+};
+
+export const getUserData = async (uid: string) => {
+  try {
+    const userRef = ref(db, `users/${uid}`);
+    const snapshot = await get(userRef);
+    if (snapshot.exists()) {
+      return { success: true, data: snapshot.val() as User };
+    }
+    return { success: false, error: 'User not found' };
+  } catch (error) {
+    console.error('Error getting user data:', error);
+    return { success: false, error };
+  }
+};
+
+export const saveUserData = async (uid: string, userData: Omit<User, 'id'>) => {
+  try {
+    const userRef = ref(db, `users/${uid}`);
+    await set(userRef, {
+      id: uid,
+      ...userData
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error saving user data:', error);
     return { success: false, error };
   }
 };
@@ -88,11 +135,62 @@ export interface BlockchainAnchor {
 export interface User {
   id: string
   email: string
-  role: 'farmer' | 'aggregator' | 'retailer' | 'consumer'
+  role: 'admin' | 'farmer' | 'aggregator' | 'retailer' | 'officer' | 'consumer'
   name: string
   organization?: string
   created_at: string
 }
+
+export const getAuthorizedUserByEmail = async (email: string) => {
+  try {
+    const authorizedRef = ref(db, 'authorized_users');
+    const snapshot = await get(authorizedRef);
+    if (!snapshot.exists()) return { success: false, error: 'No authorized users found' };
+    
+    const data = snapshot.val();
+    const foundId = Object.keys(data).find(key => data[key].email.toLowerCase() === email.toLowerCase());
+    
+    if (foundId) {
+      return { success: true, data: { id: foundId, ...data[foundId] } };
+    }
+    return { success: false, error: 'Email not authorized' };
+  } catch (error) {
+    console.error('Error checking authorized user:', error);
+    return { success: false, error };
+  }
+};
+
+export const addAuthorizedUser = async (email: string, role: string, name: string) => {
+  try {
+    const authorizedRef = ref(db, 'authorized_users');
+    const newUserRef = push(authorizedRef);
+    await set(newUserRef, {
+      email,
+      role,
+      name,
+      created_at: new Date().toISOString()
+    });
+    return { success: true, id: newUserRef.key };
+  } catch (error) {
+    console.error('Error adding authorized user:', error);
+    return { success: false, error };
+  }
+};
+
+export const getAllAuthorizedUsers = async () => {
+  try {
+    const authorizedRef = ref(db, 'authorized_users');
+    const snapshot = await get(authorizedRef);
+    if (!snapshot.exists()) return { success: true, data: [] };
+    
+    const data = snapshot.val();
+    const users = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+    return { success: true, data: users };
+  } catch (error) {
+    console.error('Error getting authorized users:', error);
+    return { success: false, error };
+  }
+};
 
 // Helper functions for Firebase operations
 export const createBatch = async (batchData: Omit<Batch, 'id' | 'created_at' | 'updated_at'>) => {

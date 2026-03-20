@@ -2,7 +2,7 @@
 ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret';
 
 -- Create custom types
-CREATE TYPE user_role AS ENUM ('farmer', 'aggregator', 'retailer', 'consumer');
+CREATE TYPE user_role AS ENUM ('farmer', 'aggregator', 'retailer', 'consumer', 'officer', 'admin');
 CREATE TYPE batch_status AS ENUM ('active', 'recalled', 'completed');
 CREATE TYPE event_type AS ENUM ('harvest', 'transport', 'processing', 'storage', 'retail');
 
@@ -106,7 +106,9 @@ INSERT INTO users (id, email, role, name, organization) VALUES
   ('550e8400-e29b-41d4-a716-446655440001', 'farmer@example.com', 'farmer', 'John Farmer', 'Green Valley Farms'),
   ('550e8400-e29b-41d4-a716-446655440002', 'aggregator@example.com', 'aggregator', 'Jane Aggregator', 'Fresh Supply Co'),
   ('550e8400-e29b-41d4-a716-446655440003', 'retailer@example.com', 'retailer', 'Bob Retailer', 'SuperMart Chain'),
-  ('550e8400-e29b-41d4-a716-446655440004', 'consumer@example.com', 'consumer', 'Alice Consumer', NULL);
+  ('550e8400-e29b-41d4-a716-446655440004', 'consumer@example.com', 'consumer', 'Alice Consumer', NULL),
+  ('550e8400-e29b-41d4-a716-446655440005', 'admin@agrichain.com', 'admin', 'Super Admin', 'AgriChain HQ'),
+  ('550e8400-e29b-41d4-a716-446655440006', 'officer@agrichain.com', 'officer', 'Oliver Officer', 'Food Safety Authority');
 
 -- Create indexes for better performance
 CREATE INDEX idx_batches_farmer_id ON batches(farmer_id);

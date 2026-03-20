@@ -14,16 +14,18 @@ import {
   User,
   LogOut,
   Menu,
-  X
+  X,
+  Shield
 } from 'lucide-react'
 import { useState } from 'react'
 
 const navigation = [
-  { name: 'Home', href: '/', icon: Home, roles: ['farmer', 'aggregator', 'retailer', 'consumer'] },
+  { name: 'Home', href: '/', icon: Home, roles: ['farmer', 'aggregator', 'retailer', 'consumer', 'officer', 'admin'] },
+  { name: 'Admin', href: '/admin', icon: Shield, roles: ['admin'] },
   { name: 'Farmer', href: '/farmer', icon: Wheat, roles: ['farmer'] },
-  { name: 'Trace Event', href: '/event', icon: Truck, roles: ['aggregator', 'retailer'] },
-  { name: 'Verify', href: '/verify', icon: Search, roles: ['consumer'] },
-  { name: 'Dashboard', href: '/dashboard', icon: BarChart3, roles: ['farmer', 'aggregator', 'retailer'] },
+  { name: 'Trace Event', href: '/event', icon: Truck, roles: ['aggregator', 'retailer', 'officer'] },
+  { name: 'Verify', href: '/verify', icon: Search, roles: ['consumer', 'officer', 'admin'] },
+  { name: 'Dashboard', href: '/dashboard', icon: BarChart3, roles: ['farmer', 'aggregator', 'retailer', 'admin', 'officer'] },
 ]
 
 export function Navbar() {
@@ -85,10 +87,10 @@ export function Navbar() {
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2 bg-white/50 rounded-full px-4 py-2">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-600 to-green-500 flex items-center justify-center text-white font-semibold text-sm">
-                    {user.name.charAt(0).toUpperCase()}
+                    {user.name?.[0]?.toUpperCase() ?? 'U'}
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-gray-900">{user.name}</div>
+                    <div className="text-sm font-semibold text-gray-900">{user.name || 'User'}</div>
                     <div className="text-xs text-gray-600 capitalize">{user.role}</div>
                   </div>
                 </div>
@@ -153,10 +155,10 @@ export function Navbar() {
                   <div className="space-y-2">
                     <div className="flex items-center space-x-3 px-4 py-3 bg-white/50 rounded-lg">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-600 to-green-500 flex items-center justify-center text-white font-semibold">
-                        {user.name.charAt(0).toUpperCase()}
+                        {user.name?.[0]?.toUpperCase() ?? 'U'}
                       </div>
                       <div>
-                        <div className="text-sm font-semibold text-gray-900">{user.name}</div>
+                        <div className="text-sm font-semibold text-gray-900">{user.name || 'User'}</div>
                         <div className="text-xs text-gray-600 capitalize">{user.role}</div>
                       </div>
                     </div>
